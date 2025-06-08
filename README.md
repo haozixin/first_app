@@ -227,24 +227,7 @@ flutter build web
 
 ## Features Roadmap
 - [ ] Real API integration
-- [ ] Push notifications
 - [ ] Offline support
-- [ ] Multi-language support
 - [ ] Weather integration
-- [ ] Historical data analysis
 
-## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-For questions or support, please create an issue in the repository.
