@@ -122,6 +122,58 @@ For Web:
 flutter run -d chrome
 ```
 
+## Running on Different Platforms
+
+You can run the AgriWatch app on Android, iOS, and Web platforms. Below are the recommended commands for each platform:
+
+### Android
+```bash
+# List available Android emulators
+flutter emulators
+
+# Launch a specific Android emulator (replace <emulator_id> with your emulator's id)
+flutter emulators --launch <emulator_id>
+
+
+# Or specify the emulator/device id directly
+flutter run -d emulator-5554
+```
+
+### iOS
+```bash
+# List available iOS simulators
+flutter emulators
+
+# Launch the iOS simulator
+# if not first time run, you can directly run the app in the simulator
+flutter emulators --launch apple_ios_simulator
+
+# List all connected devices
+flutter devices
+
+
+# In my local computer I use
+flutter run -d "iPhone 16 Plus"
+```
+
+### Web
+```bash
+# Run the app in Chrome browser
+flutter run -d chrome
+
+# Or run on the web server (for other browsers)
+flutter run -d web-server
+```
+
+### General
+```bash
+# List all connected devices
+flutter devices
+
+# Run and select device interactively
+flutter run
+```
+
 ## App Screenshots
 
 ### Login Page
