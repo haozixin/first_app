@@ -3,14 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/routing/app_router.dart';
+import '../providers/dashboard_providers.dart';
 import '../widgets/farm_card.dart';
 
 @RoutePage()
-class DashboardPage extends ConsumerWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends ConsumerState<DashboardPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Load farms when the page is initialized
+    Future.microtask(() => ref.read(dashboardControllerProvider.notifier).loadFarms());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(dashboardControllerProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppConstants.appName),
@@ -37,7 +52,7 @@ class DashboardPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Farm Areas',
+                'Farm Areass',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -51,52 +66,64 @@ class DashboardPage extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               
-              // Farm Cards Grid
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  children: [
-                    FarmCard(
-                      farmId: '1',
-                      farmName: 'Farm 1',
-                      location: 'East Region',
-                      soilMoisture: 75,
-                      droughtLevel: 'Low',
-                      imageAsset: 'assets/images/farm1.jpg',
-                      onTap: () => _navigateToFarmDetail(context, '1', 'Farm 1'),
+              if (state.isLoading)
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              else if (state.errorMessage != null)
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Error: ${state.errorMessage}',
+                          style: TextStyle(color: Theme.of(context).colorScheme.error),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            ref.read(dashboardControllerProvider.notifier).loadFarms();
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
                     ),
-                    FarmCard(
-                      farmId: '2',
-                      farmName: 'Farm 2',
-                      location: 'South Region',
-                      soilMoisture: 40,
-                      droughtLevel: 'Medium',
-                      imageAsset: 'assets/images/farm2.jpg',
-                      onTap: () => _navigateToFarmDetail(context, '2', 'Farm 2'),
+                  ),
+                )
+              else if (state.farms.isEmpty)
+                const Expanded(
+                  child: Center(
+                    child: Text('No farms available'),
+                  ),
+                )
+              else
+                // Farm Cards Grid
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
                     ),
-                    FarmCard(
-                      farmId: '3',
-                      farmName: 'Farm 3',
-                      location: 'West Region',
-                      soilMoisture: 85,
-                      droughtLevel: 'Low',
-                      imageAsset: 'assets/images/farm3.jpg',
-                      onTap: () => _navigateToFarmDetail(context, '3', 'Farm 3'),
-                    ),
-                    FarmCard(
-                      farmId: '4',
-                      farmName: 'Farm 4',
-                      location: 'North Region',
-                      soilMoisture: 25,
-                      droughtLevel: 'High',
-                      imageAsset: 'assets/images/farm4.jpg',
-                      onTap: () => _navigateToFarmDetail(context, '4', 'Farm 4'),
-                    ),
-                  ],
+                    itemCount: state.farms.length,
+                    itemBuilder: (context, index) {
+                      final farm = state.farms[index];
+                      return FarmCard(
+                        farmId: farm.id,
+                        farmName: farm.name,
+                        location: farm.location,
+                        soilMoisture: farm.soilMoisture,
+                        droughtLevel: farm.droughtLevel,
+                        imageAsset: farm.imageAsset,
+                        onTap: () => _navigateToFarmDetail(context, farm.id, farm.name),
+                      );
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         ),
