@@ -134,9 +134,6 @@ flutter emulators
 # Launch a specific Android emulator (replace <emulator_id> with your emulator's id)
 flutter emulators --launch <emulator_id>
 
-
-# Or specify the emulator/device id directly
-flutter run -d emulator-5554
 ```
 
 ### iOS
